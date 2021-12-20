@@ -8,11 +8,18 @@ namespace App\MessageHandler;
  */
 
 use App\Message\MailNotification;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Twig\TokenParser\EmbedTokenParser;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Mime\Email;
 
-class MailNotificationHandler
+class MailNotificationHandler implements MessageHandlerInterface
 {
+    /**
+     * @var MailerInterface
+     */
+    private $mailer;
+
     private function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
@@ -27,6 +34,9 @@ class MailNotificationHandler
             ->html('<p>' . $message->getDescription() . '</p>');
 
         sleep(10);
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+        }
     }
 }

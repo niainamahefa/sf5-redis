@@ -9,9 +9,9 @@ namespace App\Message;
 
 class MailNotification
 {
-    private $description;
-    private $id;
-    private $from;
+    private string $description;
+    private int $id;
+    private string $from;
 
     public function __construct(string $description, int $id, string  $from)
     {
