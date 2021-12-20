@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use \App\Entity\Message;
 use App\Form\MessageType;
+use App\Message\MailNotification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,17 +36,9 @@ class HomeController extends AbstractController
             $entityManager->flush();
 
             /*
-             * Send mail
+             * envoyer un message dans un bus à chaque soumission du formulaire
              */
-            $email = (new Email())
-                ->from($message->getUsers()->getEmail())
-                ->to('you@exemple.com')
-                ->subject('New message' .$message->getId() . ' - ' . $message->getUsers()->getEmail())
-                ->html('<p>' . $message->getDescription() . '</p>');
-
-            sleep(1);
-
-                $mailer->send($email);
+            $this->dispatchMessage(new MailNotification($message->getDescription(), $message->getId(), $message->getUsers()->getEmail()));
 
             return $this->redirectToRoute('home');
 

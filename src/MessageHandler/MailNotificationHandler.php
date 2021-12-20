@@ -18,8 +18,15 @@ class MailNotificationHandler
         $this->mailer = $mailer;
     }
 
-    public function __invoke(MailNotification $mmessage)
+    public function __invoke(MailNotification $message)
     {
+        $email = (new Email())
+            ->from($message->getFrom())
+            ->to('superadmin@my-website.io')
+            ->subject('New Message #' . $message->getId() . ' - ' . $message->getFrom())
+            ->html('<p>' . $message->getDescription() . '</p>');
 
+        sleep(10);
+        $this->mailer->send($email);
     }
 }
